@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>placeholder_name</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">♪</span>
+                <h1>placeholder_name</h1>
+            </div>
+            <div class="header-actions">
+                <span id="sync-status" class="sync-status"></span>
+                <button id="btn-sync" class="btn btn-primary" disabled>Sync Now</button>
+                <button id="btn-settings" class="btn btn-secondary">Settings</button>
+            </div>
+        </header>
+
+        <!-- Tab Navigation -->
+        <nav class="tab-nav" id="tab-nav">
+            <button class="tab-btn active" data-tab="overview">Overview</button>
+            <button class="tab-btn" data-tab="setup">Setup Guide</button>
+            <button class="tab-btn" data-tab="discover">Discover</button>
+            <button class="tab-btn" data-tab="dashboard">History</button>
+            <button class="tab-btn" data-tab="data">ML Data</button>
+        </nav>
+
+        <!-- Setup Modal -->
+        <div id="setup-modal" class="modal">
+            <div class="modal-content">
+                <h2>Setup Last.fm Connection</h2>
+                <p class="modal-subtitle">
+                    Enter your Last.fm API credentials.
+                    <a href="https://www.last.fm/api/account/create" target="_blank">Create API account</a>
+                </p>
+                <form id="setup-form">
+                    <div class="form-group">
+                        <label for="username">Last.fm Username</label>
+                        <input type="text" id="username" name="username" required
+                               placeholder="Your Last.fm username">
+                    </div>
+                    <div class="form-group">
+                        <label for="api-key">API Key</label>
+                        <input type="text" id="api-key" name="api_key" required
+                               placeholder="Your API key from last.fm/api">
+                    </div>
+                    <div class="form-group">
+                        <label for="sync-interval">Sync Interval (minutes)</label>
+                        <input type="number" id="sync-interval" name="sync_interval"
+                               value="30" min="5" max="1440">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="btn-cancel-setup" class="btn btn-secondary">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save & Connect</button>
+                    </div>
+                </form>
+                <div id="setup-error" class="error-message"></div>
+            </div>
+        </div>
+
+        <!-- Overview Tab Content -->
+        <main class="main-content tab-content active" id="overview-tab">
+            <div class="discover-placeholder">
+                <h2>DS 440 Capstone</h2>
+                <p>A personal music analytics and recommendation platform powered by your Last.fm listening history.</p>
+
+                <div class="discover-features" style="margin-top: 2rem;">
+                    <div class="feature-card">
+                        <div class="feature-icon">&#128202;</div>
+                        <h3>Listening History</h3>
+                        <p>Automatically syncs your scrobbles from Last.fm. Browse your recent plays, top artists, tracks, and albums across different time periods.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">&#127925;</div>
+                        <h3>Music Discovery</h3>
+                        <p>Get personalized recommendations using a hybrid tag-based engine. Choose Comfort Zone to find more of what you love, or Branch Out to explore new sounds.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">&#129504;</div>
+                        <h3>How It Works</h3>
+                        <p>The recommendation engine analyzes your listening patterns, artist tags, and co-listening habits to build a profile of your taste, then scores candidate tracks against it.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">&#128269;</div>
+                        <h3>Tag-Based Matching</h3>
+                        <p>Artist and track tags from Last.fm are compared using cosine similarity. The more complete your tag data, the better the recommendations become.</p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem; padding: 1.5rem; background: var(--color-card-bg); border-radius: 12px; border: 1px solid var(--color-border);">
+                    <h3 style="margin: 0 0 0.75rem 0; font-size: 1rem; color: var(--color-text);">Getting Started</h3>
+                    <ol style="margin: 0; padding-left: 1.25rem; color: var(--color-text-muted); line-height: 1.8;">
+                        <li>Connect your Last.fm account via the settings button above</li>
+                        <li>Your listening history will sync automatically in the background</li>
+                        <li>Tag and similar artist data is collected gradually to power recommendations</li>
+                        <li>Head to the <strong>Discover</strong> tab to generate personalized recommendations</li>
+                        <li>Give feedback on recommendations to improve future suggestions</li>
+                    </ol>
+                </div>
+            </div>
+        </main>
+
+        <!-- Setup Guide Tab Content -->
+        <main class="main-content tab-content" id="setup-tab">
+            <div class="discover-placeholder">
+                <h2>Setup Guide</h2>
+                <p>Follow these steps to run the application locally on your machine.</p>
+
+                <!-- Prerequisites -->
+                <div style="margin-top: 2rem; padding: 1.5rem; background: var(--color-card-bg); border-radius: 12px; border: 1px solid var(--color-border);">
+                    <h3 style="margin: 0 0 1rem 0; font-size: 1.1rem; color: var(--color-text);">Prerequisites</h3>
+                    <ul style="margin: 0; padding-left: 1.25rem; color: var(--color-text-muted); line-height: 1.8;">
+                        <li><strong>Python 3.9+</strong> - <a href="https://www.python.org/downloads/" target="_blank" style="color: var(--color-primary);">Download here</a></li>
+                        <li><strong>Last.fm Account</strong> - <a href="https://www.last.fm/join" target="_blank" style="color: var(--color-primary);">Create one here</a></li>
+                        <li><strong>Last.fm API Key</strong> - <a href="https://www.last.fm/api/account/create" target="_blank" style="color: var(--color-primary);">Get your API key</a></li>
+                    </ul>
+                </div>
+
+                <!-- Installation Steps -->
+                <div style="margin-top: 1.5rem; padding: 1.5rem; background: var(--color-card-bg); border-radius: 12px; border: 1px solid var(--color-border);">
+                    <h3 style="margin: 0 0 1rem 0; font-size: 1.1rem; color: var(--color-text);">Installation</h3>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; color: var(--color-text);">1. Clone the Repository</h4>
+                        <pre style="background: #1a1a2e; padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 0;"><code style="color: #a8dadc; font-family: 'Consolas', 'Monaco', monospace; font-size: 0.85rem;">git clone https://github.com/YOUR_USERNAME/lastfm-tracker.git
+cd lastfm-tracker</code></pre>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; color: var(--color-text);">2. Create Virtual Environment</h4>
+                        <pre style="background: #1a1a2e; padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 0;"><code style="color: #a8dadc; font-family: 'Consolas', 'Monaco', monospace; font-size: 0.85rem;"># Create virtual environment
+python -m venv venv
+
+# Activate it (Windows)
+venv\Scripts\activate
+
+# Activate it (macOS/Linux)
+source venv/bin/activate</code></pre>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; color: var(--color-text);">3. Install Dependencies</h4>
+                        <pre style="background: #1a1a2e; padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 0;"><code style="color: #a8dadc; font-family: 'Consolas', 'Monaco', monospace; font-size: 0.85rem;">pip install -r requirements.txt</code></pre>
+                    </div>
+
+                    <div>
+                        <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; color: var(--color-text);">4. Run the Application</h4>
+                        <pre style="background: #1a1a2e; padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 0;"><code style="color: #a8dadc; font-family: 'Consolas', 'Monaco', monospace; font-size: 0.85rem;">python app.py</code></pre>
+                        <p style="margin: 0.75rem 0 0 0; color: var(--color-text-muted); font-size: 0.85rem;">The app will start at <strong style="color: var(--color-primary);">http://localhost:5000</strong></p>
+                    </div>
+                </div>
+
+                <!-- Configuration -->
+                <div style="margin-top: 1.5rem; padding: 1.5rem; background: var(--color-card-bg); border-radius: 12px; border: 1px solid var(--color-border);">
+                    <h3 style="margin: 0 0 1rem 0; font-size: 1.1rem; color: var(--color-text);">Configuration</h3>
+                    <ol style="margin: 0; padding-left: 1.25rem; color: var(--color-text-muted); line-height: 1.8;">
+                        <li>Open <strong style="color: var(--color-primary);">http://localhost:5000</strong> in your browser</li>
+                        <li>Click the <strong>Settings</strong> button (gear icon) in the header</li>
+                        <li>Enter your <strong>Last.fm Username</strong></li>
+                        <li>Enter your <strong>Last.fm API Key</strong></li>
+                        <li>Click <strong>Save & Connect</strong></li>
+                        <li>Your listening history will begin syncing automatically</li>
+                    </ol>
+                </div>
+
+                <!-- Getting API Key -->
+                <div style="margin-top: 1.5rem; padding: 1.5rem; background: var(--color-card-bg); border-radius: 12px; border: 1px solid var(--color-border);">
+                    <h3 style="margin: 0 0 1rem 0; font-size: 1.1rem; color: var(--color-text);">How to Get Your Last.fm API Key</h3>
+                    <ol style="margin: 0; padding-left: 1.25rem; color: var(--color-text-muted); line-height: 1.8;">
+                        <li>Go to <a href="https://www.last.fm/api/account/create" target="_blank" style="color: var(--color-primary);">Last.fm API Account Creation</a></li>
+                        <li>Log in with your Last.fm account</li>
+                        <li>Fill in the application details:
+                            <ul style="margin: 0.5rem 0; padding-left: 1.25rem;">
+                                <li><strong>Application name:</strong> "Personal Listening Tracker"</li>
+                                <li><strong>Application description:</strong> "Personal music analytics"</li>
+                                <li><strong>Callback URL:</strong> Leave blank</li>
+                            </ul>
+                        </li>
+                        <li>Click <strong>Submit</strong></li>
+                        <li>Copy your <strong>API Key</strong> (you don't need the shared secret)</li>
+                    </ol>
+                </div>
+
+                <!-- Troubleshooting -->
+                <div style="margin-top: 1.5rem; padding: 1.5rem; background: var(--color-card-bg); border-radius: 12px; border: 1px solid var(--color-border);">
+                    <h3 style="margin: 0 0 1rem 0; font-size: 1.1rem; color: var(--color-text);">Troubleshooting</h3>
+                    <div style="color: var(--color-text-muted); line-height: 1.8;">
+                        <p style="margin: 0 0 0.75rem 0;"><strong style="color: var(--color-text);">"Invalid API key" error:</strong> Double-check your API key has no extra spaces.</p>
+                        <p style="margin: 0 0 0.75rem 0;"><strong style="color: var(--color-text);">Sync not running:</strong> Make sure the terminal running <code style="background: #1a1a2e; padding: 0.15rem 0.4rem; border-radius: 4px;">python app.py</code> stays open.</p>
+                        <p style="margin: 0;"><strong style="color: var(--color-text);">Missing scrobbles:</strong> Last.fm may have delays. Wait a few minutes and try syncing again.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- History Tab Content (formerly Dashboard) -->
+        <main class="main-content tab-content" id="dashboard-tab">
+            <!-- Stats Cards -->
+            <section class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-total">-</div>
+                        <div class="stat-label">Total Plays</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-artists">-</div>
+                        <div class="stat-label">Unique Artists</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-tracks">-</div>
+                        <div class="stat-label">Unique Tracks</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-today">-</div>
+                        <div class="stat-label">Today</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-streak">-</div>
+                        <div class="stat-label">Current Streak</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Content Grid -->
+            <div class="content-grid">
+                <!-- Recent Scrobbles -->
+                <section class="panel recent-panel">
+                    <div class="panel-header">
+                        <h2>Recent Songs</h2>
+                        <span id="scrobble-count" class="count-badge">0</span>
+                    </div>
+                    <div class="scrobble-list" id="scrobble-list">
+                        <div class="loading">Loading...</div>
+                    </div>
+                    <div class="panel-footer">
+                        <button id="btn-load-more" class="btn btn-text">Load More</button>
+                    </div>
+                </section>
+
+                <!-- Top Tracks -->
+                <section class="panel">
+                    <div class="panel-header">
+                        <h2>Top Tracks</h2>
+                        <select id="track-period" class="period-select">
+                            <option value="all">All Time</option>
+                            <option value="year">This Year</option>
+                            <option value="month">This Month</option>
+                            <option value="week">This Week</option>
+                            <option value="today">Today</option>
+                        </select>
+                    </div>
+                    <div class="top-list" id="top-tracks-list">
+                        <div class="loading">Loading...</div>
+                    </div>
+                </section>
+
+                <!-- Top Artists -->
+                <section class="panel">
+                    <div class="panel-header">
+                        <h2>Top Artists</h2>
+                        <select id="artist-period" class="period-select">
+                            <option value="all">All Time</option>
+                            <option value="year">This Year</option>
+                            <option value="month">This Month</option>
+                            <option value="week">This Week</option>
+                            <option value="today">Today</option>
+                        </select>
+                    </div>
+                    <div class="top-list" id="top-artists-list">
+                        <div class="loading">Loading...</div>
+                    </div>
+                </section>
+
+                <!-- Top Albums -->
+                <section class="panel">
+                    <div class="panel-header">
+                        <h2>Top Albums</h2>
+                        <select id="album-period" class="period-select">
+                            <option value="all">All Time</option>
+                            <option value="year">This Year</option>
+                            <option value="month">This Month</option>
+                            <option value="week">This Week</option>
+                            <option value="today">Today</option>
+                        </select>
+                    </div>
+                    <div class="top-list" id="top-albums-list">
+                        <div class="loading">Loading...</div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Export Section -->
+            <section class="export-section">
+                <h3>Export Data</h3>
+                <div class="export-buttons">
+                    <button class="btn btn-secondary" onclick="exportData('scrobbles', 'json')">
+                        Export Plays (JSON)
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportData('scrobbles', 'csv')">
+                        Export Plays (CSV)
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportData('tracks', 'json')">
+                        Export Tracks (JSON)
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportData('artists', 'csv')">
+                        Export Artists (CSV)
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <!-- ML Data Tab Content -->
+        <main class="main-content tab-content" id="data-tab">
+            <div class="data-container">
+                <!-- Status Note -->
+                <div style="background: rgba(255, 193, 7, 0.1); border: 1px solid rgba(255, 193, 7, 0.3); border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1.5rem;">
+                    <p style="margin: 0; color: var(--color-text); font-size: 0.9rem;">
+                        <strong style="color: #ffc107;">⚠️ Note:</strong> Tag and similar artist data is being collected in the background from Last.fm.
+                        Recommendations may be limited or less accurate until data collection reaches 100%. This process runs automatically.
+                    </p>
+                </div>
+                <!-- Progress Section -->
+                <section class="data-section">
+                    <h2>Data Collection Progress</h2>
+                    <div class="progress-cards">
+                        <div class="progress-card">
+                            <div class="progress-card-header">
+                                <span class="progress-icon">🏷️</span>
+                                <h3>Artist Tags</h3>
+                            </div>
+                            <div class="progress-bar-large">
+                                <div class="progress-fill-large" id="tags-progress-bar"></div>
+                            </div>
+                            <div class="progress-stats">
+                                <span id="tags-progress-text">0 / 0 artists</span>
+                                <span id="tags-progress-pct">0%</span>
+                            </div>
+                        </div>
+                        <div class="progress-card">
+                            <div class="progress-card-header">
+                                <span class="progress-icon">🔗</span>
+                                <h3>Similar Artists</h3>
+                            </div>
+                            <div class="progress-bar-large">
+                                <div class="progress-fill-large" id="similar-progress-bar"></div>
+                            </div>
+                            <div class="progress-stats">
+                                <span id="similar-progress-text">0 / 0 artists</span>
+                                <span id="similar-progress-pct">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="data-stats-row">
+                        <div class="data-stat">
+                            <span class="data-stat-value" id="total-tags">0</span>
+                            <span class="data-stat-label">Total Tags</span>
+                        </div>
+                        <div class="data-stat">
+                            <span class="data-stat-value" id="unique-tags">0</span>
+                            <span class="data-stat-label">Unique Tags</span>
+                        </div>
+                        <div class="data-stat">
+                            <span class="data-stat-value" id="total-similar">0</span>
+                            <span class="data-stat-label">Similar Relationships</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Top Tags Section -->
+                <section class="data-section">
+                    <h2>Top Genre/Mood Tags</h2>
+                    <div class="tags-cloud" id="tags-cloud">
+                        <div class="loading">Loading...</div>
+                    </div>
+                </section>
+
+                <!-- Artist Tags Sample -->
+                <section class="data-section">
+                    <h2>Artist Tags (Sample)</h2>
+                    <div class="artist-tags-list" id="artist-tags-list">
+                        <div class="loading">Loading...</div>
+                    </div>
+                </section>
+
+                <!-- Similar Artists Sample -->
+                <section class="data-section">
+                    <h2>Similar Artists (Sample)</h2>
+                    <div class="similar-artists-list" id="similar-artists-list">
+                        <div class="loading">Loading...</div>
+                    </div>
+                </section>
+
+                <!-- Refresh Button -->
+                <div class="data-actions">
+                    <button class="btn btn-primary" id="btn-refresh-data">Refresh Data</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Discover Tab Content -->
+        <main class="main-content tab-content" id="discover-tab">
+            <div class="discover-placeholder">
+                <div class="discover-icon">&#127925;</div>
+                <h2>Discover New Music</h2>
+                <p>Get personalized recommendations based on your listening history and tag preferences.</p>
+                <div class="discover-features">
+                    <div class="feature-card">
+                        <div class="feature-icon">&#127968;</div>
+                        <h3>Comfort Zone</h3>
+                        <p>Find tracks similar to what you already love based on tags and listening patterns.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">&#127758;</div>
+                        <h3>Branch Out</h3>
+                        <p>Explore similar artists and discover new sounds beyond your usual taste.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">&#128077;</div>
+                        <h3>Smart Feedback</h3>
+                        <p>Like or dislike recommendations to improve future suggestions.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">&#127926;</div>
+                        <h3>Playlist Export</h3>
+                        <p>Export your discoveries to create playlists on Spotify.</p>
+                    </div>
+                </div>
+                <div class="discover-cta" style="margin-top: 2rem; text-align: center;">
+                    <a href="/discover" class="btn btn-primary btn-large">Open Discovery Wizard</a>
+                </div>
+                <div class="discover-stats" id="discover-stats" style="display: flex; justify-content: center; gap: 3rem; margin-top: 2rem;">
+                    <div class="mini-stat" style="text-align: center;">
+                        <span class="mini-stat-value" id="rec-stat-generated" style="font-size: 1.5rem; font-weight: 600; color: var(--color-primary); display: block;">0</span>
+                        <span class="mini-stat-label" style="font-size: 0.75rem; color: var(--color-text-muted);">Generated</span>
+                    </div>
+                    <div class="mini-stat" style="text-align: center;">
+                        <span class="mini-stat-value" id="rec-stat-liked" style="font-size: 1.5rem; font-weight: 600; color: var(--color-primary); display: block;">0</span>
+                        <span class="mini-stat-label" style="font-size: 0.75rem; color: var(--color-text-muted);">Liked</span>
+                    </div>
+                    <div class="mini-stat" style="text-align: center;">
+                        <span class="mini-stat-value" id="rec-stat-rate" style="font-size: 1.5rem; font-weight: 600; color: var(--color-primary); display: block;">0%</span>
+                        <span class="mini-stat-label" style="font-size: 0.75rem; color: var(--color-text-muted);">Like Rate</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Not Configured Message -->
+        <div id="not-configured" class="not-configured" style="display: none;">
+            <div class="not-configured-content">
+                <h2>Welcome to placeholder_name</h2>
+                <p>Track your listening history and discover insights about your music taste.</p>
+                <button id="btn-get-started" class="btn btn-primary btn-large">Get Started</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
