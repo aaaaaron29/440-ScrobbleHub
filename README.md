@@ -1,4 +1,4 @@
-# Last.fm Listening History Tracker
+# ScrobbleHub - A Last.fm Listening History Tracker
 
 A Python-based application that tracks your Last.fm listening history for data science analysis and recommendation system research. Designed to run continuously in the background, collecting scrobble data over weeks or months.
 
