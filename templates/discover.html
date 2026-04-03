@@ -3,428 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discover - Last.fm Tracker</title>
+    <title>Discover — Scrobble Hub</title>
     <link rel="stylesheet" href="/static/css/style.css">
     <style>
-        /* Discover Page Specific Styles */
+        /* ── Discover page overrides ─────────────────────────────────────── */
+
         .discover-container {
-            max-width: 900px;
+            max-width: 860px;
             margin: 0 auto;
             padding: 2rem;
         }
 
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--color-text-secondary);
-            text-decoration: none;
-            margin-bottom: 1.5rem;
-            font-size: 0.875rem;
-        }
-
-        .back-link:hover {
-            color: var(--color-primary);
-        }
-
-        .page-title {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .page-subtitle {
-            color: var(--color-text-secondary);
+        /* Small stats on discover (different from main page giant stats) */
+        .stats-panel {
+            border-top: 1px solid var(--border-2);
+            padding-top: 1.5rem;
             margin-bottom: 2rem;
         }
 
-        /* Wizard Steps */
-        .wizard-steps {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 2rem;
-            position: relative;
+        .stats-panel > h3 {
+            font-family: var(--font-c);
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--t3);
+            margin-bottom: 1.25rem;
         }
 
-        .wizard-steps::before {
-            content: '';
-            position: absolute;
-            top: 20px;
-            left: 50px;
-            right: 50px;
-            height: 2px;
-            background: var(--color-border);
+        .stats-grid-small {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
         }
 
-        .wizard-step {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            z-index: 1;
+        .stat-item {
+            padding-right: 1.5rem;
+            border-right: 1px solid var(--border);
         }
 
-        .step-number {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--color-surface);
-            border: 2px solid var(--color-border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .stat-item:last-child {
+            border-right: none;
+            padding-right: 0;
+        }
+
+        .stat-item .stat-value {
+            font-family: var(--font-d);
+            font-size: 2.75rem;
             font-weight: 600;
-            transition: all 0.3s ease;
+            line-height: 0.95;
+            color: var(--t1);
+            display: block;
+            margin-bottom: 0.3rem;
         }
 
-        .wizard-step.active .step-number {
-            background: var(--color-primary);
-            border-color: var(--color-primary);
-        }
-
-        .wizard-step.completed .step-number {
-            background: var(--color-success);
-            border-color: var(--color-success);
-        }
-
-        .step-label {
-            font-size: 0.75rem;
-            color: var(--color-text-muted);
-            text-align: center;
-        }
-
-        .wizard-step.active .step-label {
-            color: var(--color-text);
-        }
-
-        /* Wizard Panels */
-        .wizard-panel {
-            display: none;
-            background: var(--color-surface);
-            border-radius: var(--border-radius);
-            padding: 2rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .wizard-panel.active {
+        .stat-item .stat-label {
+            font-family: var(--font-c);
+            font-size: 0.6rem;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--t3);
             display: block;
         }
 
-        .wizard-panel h3 {
-            margin-bottom: 1rem;
-        }
+        /* ── Spotify notice ──────────────────────────────────────────────── */
 
-        .wizard-panel p {
-            color: var(--color-text-secondary);
+        .spotify-notice {
+            background: var(--s1);
+            border: 1px solid var(--border);
+            border-left: 2px solid var(--green);
+            border-radius: 0;
+            padding: 0.875rem 1.25rem;
             margin-bottom: 1.5rem;
-        }
-
-        /* Time Period Selection */
-        .period-buttons {
             display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .period-btn {
-            flex: 1;
-            min-width: 120px;
-            padding: 1rem;
-            background: var(--color-surface-light);
-            border: 2px solid var(--color-border);
-            border-radius: var(--border-radius);
-            color: var(--color-text);
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.2s ease;
-        }
-
-        .period-btn:hover {
-            border-color: var(--color-primary);
-        }
-
-        .period-btn.selected {
-            border-color: var(--color-primary);
-            background: rgba(213, 16, 7, 0.1);
-        }
-
-        .period-btn .period-icon {
-            font-size: 1.5rem;
-            display: block;
-            margin-bottom: 0.5rem;
-        }
-
-        /* Artist Selection */
-        .artist-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 1rem;
-            max-height: 400px;
-            overflow-y: auto;
-            padding: 0.5rem;
-        }
-
-        .artist-checkbox {
-            display: none;
-        }
-
-        .artist-card {
-            background: var(--color-surface-light);
-            border: 2px solid var(--color-border);
-            border-radius: var(--border-radius);
-            padding: 1rem;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.2s ease;
-        }
-
-        .artist-card:hover {
-            border-color: var(--color-primary);
-        }
-
-        .artist-checkbox:checked + .artist-card {
-            border-color: var(--color-primary);
-            background: rgba(213, 16, 7, 0.1);
-        }
-
-        .artist-card img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 0.5rem;
-            background: var(--color-border);
-        }
-
-        .artist-card .artist-name {
-            font-size: 0.875rem;
-            font-weight: 500;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .artist-card .play-count {
-            font-size: 0.75rem;
-            color: var(--color-text-muted);
-        }
-
-        /* Mode Selection */
-        .mode-cards {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            align-items: center;
             gap: 1rem;
         }
 
-        .mode-card {
-            background: var(--color-surface-light);
-            border: 2px solid var(--color-border);
-            border-radius: var(--border-radius);
-            padding: 1.5rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .mode-card:hover {
-            border-color: var(--color-primary);
-        }
-
-        .mode-card.selected {
-            border-color: var(--color-primary);
-            background: rgba(213, 16, 7, 0.1);
-        }
-
-        .mode-card .mode-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .mode-card h4 {
-            margin-bottom: 0.5rem;
-        }
-
-        .mode-card p {
-            font-size: 0.875rem;
-            margin: 0;
-        }
-
-        /* Popularity Slider */
-        .popularity-slider-container {
-            margin-top: 1rem;
-        }
-
-        .popularity-slider {
-            width: 100%;
-            height: 8px;
-            -webkit-appearance: none;
-            background: var(--color-border);
-            border-radius: 4px;
-            outline: none;
-        }
-
-        .popularity-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: var(--color-primary);
-            cursor: pointer;
-        }
-
-        .popularity-labels {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 0.5rem;
-            font-size: 0.75rem;
-            color: var(--color-text-muted);
-        }
-
-        .popularity-value {
-            text-align: center;
-            margin-top: 1rem;
-            font-weight: 500;
-        }
-
-        /* Navigation Buttons */
-        .wizard-nav {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 1.5rem;
-        }
-
-        .btn-generate {
-            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-            padding: 1rem 2rem;
+        .spotify-notice .notice-icon {
             font-size: 1rem;
+            flex-shrink: 0;
+            opacity: 0.7;
         }
 
-        /* Results Section */
-        .results-section {
-            display: none;
-        }
-
-        .results-section.active {
-            display: block;
-        }
-
-        .results-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .results-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .recommendation-grid {
-            display: grid;
-            gap: 1rem;
-        }
-
-        .recommendation-card {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            background: var(--color-surface);
-            border-radius: var(--border-radius);
-            padding: 1rem;
-            transition: all 0.2s ease;
-        }
-
-        .recommendation-card:hover {
-            background: var(--color-surface-light);
-        }
-
-        .recommendation-card img {
-            width: 60px;
-            height: 60px;
-            border-radius: 4px;
-            object-fit: cover;
-            background: var(--color-border);
-        }
-
-        .recommendation-info {
+        .spotify-notice .notice-text {
             flex: 1;
             min-width: 0;
         }
 
-        .recommendation-info .track-name {
-            font-weight: 500;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        .spotify-notice h4 {
+            font-family: var(--font-c);
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--t1);
+            margin-bottom: 0;
         }
 
-        .recommendation-info .artist-name {
-            font-size: 0.875rem;
-            color: var(--color-text-secondary);
+        .spotify-notice p {
+            font-size: 0.8rem;
+            color: var(--t2);
+            margin: 0;
+            line-height: 1.4;
         }
 
-        .recommendation-info .reason {
-            font-size: 0.75rem;
-            color: var(--color-text-muted);
-            margin-top: 0.25rem;
-        }
+        /* ── Liked tracks ────────────────────────────────────────────────── */
 
-        .score-badge {
-            background: var(--color-primary);
-            color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .feedback-buttons {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .feedback-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: 1px solid var(--color-border);
-            background: var(--color-surface-light);
-            cursor: pointer;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-        }
-
-        .feedback-btn:hover {
-            border-color: var(--color-primary);
-        }
-
-        .feedback-btn.liked {
-            background: var(--color-success);
-            border-color: var(--color-success);
-        }
-
-        .feedback-btn.disliked {
-            background: var(--color-error);
-            border-color: var(--color-error);
-        }
-
-        .feedback-btn.preview-btn {
-            font-size: 0.75rem;
-        }
-
-        .feedback-btn.preview-btn.playing {
-            background: var(--color-primary);
-            border-color: var(--color-primary);
-        }
-
-        /* Liked Tracks Section */
         .liked-section {
-            background: var(--color-surface);
-            border-radius: var(--border-radius);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
+            background: var(--s1);
+            border: 1px solid var(--border);
+            border-radius: 0;
+            padding: 0;
+            margin-bottom: 2rem;
         }
 
         .liked-header {
@@ -432,15 +124,29 @@
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
+            padding: 0.875rem 1.25rem;
             margin-bottom: 0;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.15s;
+        }
+
+        .liked-section.expanded .liked-header {
+            border-bottom-color: var(--border);
         }
 
         .liked-header h3 {
+            font-family: var(--font-c);
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--t2);
             margin: 0;
         }
 
         .liked-header .toggle-icon {
-            font-size: 1.2rem;
+            font-size: 0.7rem;
+            color: var(--t3);
             transition: transform 0.2s;
         }
 
@@ -450,8 +156,7 @@
 
         .liked-list {
             display: none;
-            margin-top: 1rem;
-            max-height: 300px;
+            max-height: 280px;
             overflow-y: auto;
         }
 
@@ -463,20 +168,26 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid var(--color-border);
+            padding: 0.6rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.1s;
         }
 
         .liked-item:last-child {
             border-bottom: none;
         }
 
+        .liked-item:hover {
+            background: var(--s2);
+        }
+
         .liked-item img {
-            width: 40px;
-            height: 40px;
-            border-radius: 4px;
+            width: 36px;
+            height: 36px;
+            border-radius: 0;
             object-fit: cover;
-            background: var(--color-border);
+            background: var(--s3);
+            flex-shrink: 0;
         }
 
         .liked-item-info {
@@ -485,137 +196,611 @@
         }
 
         .liked-item-info .track-name {
+            font-size: 0.82rem;
             font-weight: 500;
-            font-size: 0.875rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            color: var(--t1);
         }
 
         .liked-item-info .artist-name {
-            font-size: 0.75rem;
-            color: var(--color-text-secondary);
+            font-family: var(--font-c);
+            font-size: 0.7rem;
+            color: var(--t2);
         }
 
         .liked-item .liked-date {
-            font-size: 0.7rem;
-            color: var(--color-text-muted);
+            font-family: var(--font-c);
+            font-size: 0.62rem;
+            letter-spacing: 0.06em;
+            color: var(--t3);
             white-space: nowrap;
+            flex-shrink: 0;
         }
 
-        /* Spotify Notice */
-        .spotify-notice {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
-            border-radius: var(--border-radius);
-            padding: 1rem;
-            margin-top: 1.5rem;
+        /* ── Wizard step indicator ───────────────────────────────────────── */
+
+        .wizard-steps {
             display: flex;
-            align-items: center;
-            gap: 1rem;
+            align-items: stretch;
+            margin-bottom: 0;
+            border: 1px solid var(--border);
+            border-bottom: none;
         }
 
-        .spotify-notice .notice-icon {
-            font-size: 1.5rem;
-        }
-
-        .spotify-notice .notice-text {
+        .wizard-step {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 0.75rem 1rem;
+            border-right: 1px solid var(--border);
+            transition: background 0.15s;
+            position: relative;
+            gap: 0.25rem;
         }
 
-        .spotify-notice h4 {
-            margin-bottom: 0.25rem;
+        .wizard-step:last-child {
+            border-right: none;
         }
 
-        .spotify-notice p {
-            font-size: 0.875rem;
-            color: var(--color-text-secondary);
-            margin: 0;
+        .step-number {
+            font-family: var(--font-d);
+            font-size: 1.5rem;
+            font-weight: 600;
+            line-height: 1;
+            color: var(--t3);
         }
 
-        /* Loading Overlay */
-        .loading-overlay {
+        .step-label {
+            font-family: var(--font-c);
+            font-size: 0.6rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--t3);
+        }
+
+        .wizard-step.active {
+            background: var(--s2);
+        }
+
+        .wizard-step.active .step-number {
+            color: var(--red);
+        }
+
+        .wizard-step.active .step-label {
+            color: var(--t2);
+        }
+
+        .wizard-step.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--red);
+        }
+
+        .wizard-step.completed .step-number {
+            color: var(--green);
+        }
+
+        .wizard-step.completed .step-label {
+            color: var(--t2);
+        }
+
+        /* ── Wizard panels ───────────────────────────────────────────────── */
+
+        .wizard-panel {
             display: none;
-            position: fixed;
+            background: var(--s1);
+            border: 1px solid var(--border);
+            border-top: none;
+            padding: 1.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .wizard-panel.active {
+            display: block;
+        }
+
+        .wizard-panel > h3 {
+            font-family: var(--font-d);
+            font-size: 2rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.01em;
+            line-height: 1;
+            margin-bottom: 0.375rem;
+        }
+
+        .wizard-panel > p {
+            font-size: 0.85rem;
+            color: var(--t2);
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        /* ── Period buttons ──────────────────────────────────────────────── */
+
+        .period-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+        }
+
+        .period-btn {
+            flex: 1;
+            padding: 1.25rem 1rem;
+            background: var(--s1);
+            border: none;
+            color: var(--t2);
+            cursor: pointer;
+            text-align: left;
+            transition: background 0.12s, color 0.12s;
+            font-family: var(--font-c);
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            position: relative;
+        }
+
+        .period-btn::before {
+            content: '';
+            position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 1000;
+            height: 2px;
+            background: transparent;
+            transition: background 0.12s;
+        }
+
+        .period-btn:hover {
+            background: var(--s2);
+            color: var(--t1);
+        }
+
+        .period-btn.selected {
+            background: var(--s2);
+            color: var(--t1);
+        }
+
+        .period-btn.selected::before {
+            background: var(--red);
+        }
+
+        .period-icon {
+            display: none;
+        }
+
+        /* ── Artist grid ─────────────────────────────────────────────────── */
+
+        .artist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            max-height: 380px;
+            overflow-y: auto;
+        }
+
+        .artist-checkbox {
+            display: none;
+        }
+
+        .artist-card {
+            background: var(--s1);
+            padding: 1rem;
+            cursor: pointer;
+            text-align: left;
+            transition: background 0.1s;
+            position: relative;
+        }
+
+        .artist-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: transparent;
+            transition: background 0.12s;
+        }
+
+        .artist-card:hover {
+            background: var(--s2);
+        }
+
+        .artist-checkbox:checked + .artist-card {
+            background: var(--s2);
+        }
+
+        .artist-checkbox:checked + .artist-card::before {
+            background: var(--red);
+        }
+
+        .artist-card img {
+            width: 48px;
+            height: 48px;
+            border-radius: 0;
+            object-fit: cover;
+            margin-bottom: 0.5rem;
+            background: var(--s3);
+            display: block;
+        }
+
+        .artist-card .artist-name {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--t1);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+        }
+
+        .artist-card .play-count {
+            font-family: var(--font-c);
+            font-size: 0.65rem;
+            letter-spacing: 0.06em;
+            color: var(--t3);
+        }
+
+        /* ── Mode cards ──────────────────────────────────────────────────── */
+
+        .mode-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+        }
+
+        .mode-card {
+            background: var(--s1);
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: background 0.12s;
+            position: relative;
+        }
+
+        .mode-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: transparent;
+            transition: background 0.12s;
+        }
+
+        .mode-card:hover {
+            background: var(--s2);
+        }
+
+        .mode-card.selected {
+            background: var(--s2);
+        }
+
+        .mode-card.selected::before {
+            background: var(--red);
+        }
+
+        .mode-icon {
+            display: none;
+        }
+
+        .mode-card h4 {
+            font-family: var(--font-c);
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--t1);
+            margin-bottom: 0.5rem;
+        }
+
+        .mode-card p {
+            font-size: 0.82rem;
+            color: var(--t2);
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* ── Popularity slider ───────────────────────────────────────────── */
+
+        .popularity-slider-container {
+            margin-top: 0.5rem;
+        }
+
+        .popularity-slider {
+            width: 100%;
+            height: 2px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: var(--s3);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .popularity-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 0;
+            background: var(--red);
+            cursor: pointer;
+            border: none;
+        }
+
+        .popularity-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 0;
+            background: var(--red);
+            cursor: pointer;
+            border: none;
+        }
+
+        .popularity-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.625rem;
+            font-family: var(--font-c);
+            font-size: 0.62rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--t3);
+        }
+
+        .popularity-value {
+            margin-top: 1rem;
+            font-family: var(--font-d);
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--t1);
+            letter-spacing: 0.02em;
+        }
+
+        /* ── Wizard nav ──────────────────────────────────────────────────── */
+
+        .wizard-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.75rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn-generate {
+            padding: 0.7rem 2rem;
+        }
+
+        /* ── Results ─────────────────────────────────────────────────────── */
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .results-header h3 {
+            font-family: var(--font-d);
+            font-size: 2rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.01em;
+            line-height: 1;
+        }
+
+        .results-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .recommendation-grid {
+            display: grid;
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+        }
+
+        .recommendation-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--s1);
+            padding: 0.875rem 1.25rem;
+            transition: background 0.1s;
+        }
+
+        .recommendation-card:hover {
+            background: var(--s2);
+        }
+
+        .recommendation-card img {
+            width: 44px;
+            height: 44px;
+            border-radius: 0;
+            object-fit: cover;
+            background: var(--s3);
+            flex-shrink: 0;
+        }
+
+        .recommendation-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .recommendation-info .track-name {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--t1);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+        }
+
+        .recommendation-info .artist-name {
+            font-family: var(--font-c);
+            font-size: 0.72rem;
+            color: var(--t2);
+            display: block;
+        }
+
+        .recommendation-info .reason {
+            font-family: var(--font-c);
+            font-size: 0.65rem;
+            letter-spacing: 0.04em;
+            color: var(--t3);
+            margin-top: 0.2rem;
+            display: block;
+        }
+
+        .score-badge {
+            font-family: var(--font-c);
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            background: var(--red-dim);
+            color: var(--red);
+            padding: 0.15rem 0.45rem;
+            border-radius: 0;
+            flex-shrink: 0;
+        }
+
+        .feedback-buttons {
+            display: flex;
+            gap: 0.375rem;
+            flex-shrink: 0;
+        }
+
+        .feedback-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 0;
+            border: 1px solid var(--border-2);
+            background: transparent;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.12s;
+            color: var(--t2);
+        }
+
+        .feedback-btn:hover {
+            border-color: var(--t2);
+            color: var(--t1);
+        }
+
+        .feedback-btn.liked {
+            background: rgba(0, 230, 118, 0.1);
+            border-color: var(--green);
+            color: var(--green);
+        }
+
+        .feedback-btn.disliked {
+            background: rgba(255, 23, 68, 0.1);
+            border-color: var(--error);
+            color: var(--error);
+        }
+
+        .feedback-btn.preview-btn {
+            font-size: 0.65rem;
+            font-family: var(--font-c);
+            letter-spacing: 0.06em;
+        }
+
+        .feedback-btn.preview-btn.playing {
+            background: var(--red-dim);
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        /* ── Loading overlay ─────────────────────────────────────────────── */
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.88);
+            z-index: 2000;
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            gap: 1rem;
+            gap: 1.25rem;
+            backdrop-filter: blur(4px);
         }
 
         .loading-overlay.active {
             display: flex;
         }
 
+        .loading-overlay > div:last-child {
+            font-family: var(--font-c);
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--t2);
+        }
+
         .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid var(--color-border);
-            border-top-color: var(--color-primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+            width: 36px;
+            height: 36px;
+            border: 2px solid var(--border-2);
+            border-top-color: var(--red);
+            border-radius: 0;
+            animation: spin 0.7s linear infinite;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
-        /* Stats Panel */
-        .stats-panel {
-            background: var(--color-surface);
-            border-radius: var(--border-radius);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
+        /* ── Responsive ──────────────────────────────────────────────────── */
 
-        .stats-panel h3 {
-            margin-bottom: 1rem;
-        }
-
-        .stats-grid-small {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-item .stat-value {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--color-primary);
-        }
-
-        .stat-item .stat-label {
-            font-size: 0.75rem;
-            color: var(--color-text-muted);
-        }
-
-        /* Responsive */
         @media (max-width: 768px) {
+            .discover-container {
+                padding: 1.25rem;
+            }
+
             .mode-cards {
                 grid-template-columns: 1fr;
             }
 
-            .stats-grid-small {
+            .period-buttons {
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            .wizard-steps {
-                flex-wrap: wrap;
-                gap: 0.5rem;
+            .stats-grid-small {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.25rem;
             }
 
-            .wizard-steps::before {
-                display: none;
+            .stat-item {
+                border-right: none;
+                padding-right: 0;
+            }
+
+            .wizard-steps {
+                overflow-x: auto;
             }
         }
     </style>
@@ -625,153 +810,137 @@
         <!-- Header -->
         <header class="header">
             <div class="logo">
-                <span class="logo-icon">&#9835;</span>
-                <h1>Discover Music</h1>
+                <span class="logo-icon">🐸</span>
+                <h1>Scrobble Hub</h1>
             </div>
             <div class="header-actions">
-                <a href="/" class="btn btn-secondary">Back to Dashboard</a>
+                <a href="/" class="btn btn-secondary">← Dashboard</a>
             </div>
         </header>
 
         <div class="discover-container">
             <!-- Stats Panel -->
             <div class="stats-panel" id="stats-panel">
-                <h3>Your Recommendation Stats</h3>
+                <h3>Recommendation Stats</h3>
                 <div class="stats-grid-small">
                     <div class="stat-item">
-                        <div class="stat-value" id="stat-generated">0</div>
-                        <div class="stat-label">Generated</div>
+                        <span class="stat-value" id="stat-generated">0</span>
+                        <span class="stat-label">Generated</span>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value" id="stat-liked">0</div>
-                        <div class="stat-label">Liked</div>
+                        <span class="stat-value" id="stat-liked">0</span>
+                        <span class="stat-label">Liked</span>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value" id="stat-like-rate">0%</div>
-                        <div class="stat-label">Like Rate</div>
+                        <span class="stat-value" id="stat-like-rate">0%</span>
+                        <span class="stat-label">Like Rate</span>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value" id="stat-best-mode">-</div>
-                        <div class="stat-label">Best Mode</div>
+                        <span class="stat-value" id="stat-best-mode">—</span>
+                        <span class="stat-label">Best Mode</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Spotify Connection Section -->
+            <!-- Spotify Connection -->
             <div class="spotify-notice" id="spotify-status-section">
-                <div class="notice-icon">&#127925;</div>
+                <div class="notice-icon">♫</div>
                 <div class="notice-text" id="spotify-notice-text">
                     <h4>Loading Spotify status...</h4>
                 </div>
-                <button class="btn btn-primary" id="btn-connect-spotify" style="display:none;">
-                    Connect Spotify
-                </button>
-                <button class="btn btn-secondary" id="btn-disconnect-spotify" style="display:none;">
-                    Disconnect
-                </button>
+                <button class="btn btn-primary" id="btn-connect-spotify" style="display:none;">Connect Spotify</button>
+                <button class="btn btn-secondary" id="btn-disconnect-spotify" style="display:none;">Disconnect</button>
             </div>
 
-            <!-- Liked Tracks Section -->
+            <!-- Liked Tracks -->
             <div class="liked-section" id="liked-section">
                 <div class="liked-header" onclick="toggleLikedSection()">
                     <h3>Liked Tracks (<span id="liked-count">0</span>)</h3>
-                    <span class="toggle-icon">&#9660;</span>
+                    <span class="toggle-icon">▾</span>
                 </div>
                 <div class="liked-list" id="liked-list">
-                    <p style="color: var(--color-text-muted);">No liked tracks yet.</p>
+                    <div class="liked-item" style="padding: 1rem 1.25rem; border-bottom: none;">
+                        <span style="font-family: var(--font-c); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--t3);">No liked tracks yet</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- Wizard Steps Indicator -->
+            <!-- Wizard Step Indicator -->
             <div class="wizard-steps">
                 <div class="wizard-step active" data-step="1">
-                    <div class="step-number">1</div>
-                    <div class="step-label">Time Period</div>
+                    <span class="step-number">01</span>
+                    <span class="step-label">Period</span>
                 </div>
                 <div class="wizard-step" data-step="2">
-                    <div class="step-number">2</div>
-                    <div class="step-label">Artists</div>
+                    <span class="step-number">02</span>
+                    <span class="step-label">Artists</span>
                 </div>
                 <div class="wizard-step" data-step="3">
-                    <div class="step-number">3</div>
-                    <div class="step-label">Mode</div>
+                    <span class="step-number">03</span>
+                    <span class="step-label">Mode</span>
                 </div>
                 <div class="wizard-step" data-step="4">
-                    <div class="step-number">4</div>
-                    <div class="step-label">Popularity</div>
+                    <span class="step-number">04</span>
+                    <span class="step-label">Popularity</span>
                 </div>
                 <div class="wizard-step" data-step="5">
-                    <div class="step-number">5</div>
-                    <div class="step-label">Results</div>
+                    <span class="step-number">05</span>
+                    <span class="step-label">Results</span>
                 </div>
             </div>
 
             <!-- Step 1: Time Period -->
             <div class="wizard-panel active" id="step-1">
-                <h3>Select Time Period</h3>
-                <p>Choose the listening period to base your recommendations on.</p>
+                <h3>Time Period</h3>
+                <p>Choose the listening window to base your recommendations on.</p>
                 <div class="period-buttons">
-                    <button class="period-btn" data-period="week">
-                        <span class="period-icon">&#128197;</span>
-                        This Week
-                    </button>
-                    <button class="period-btn selected" data-period="month">
-                        <span class="period-icon">&#128198;</span>
-                        This Month
-                    </button>
-                    <button class="period-btn" data-period="year">
-                        <span class="period-icon">&#128467;</span>
-                        This Year
-                    </button>
-                    <button class="period-btn" data-period="all">
-                        <span class="period-icon">&#127911;</span>
-                        All Time
-                    </button>
+                    <button class="period-btn" data-period="week">This Week</button>
+                    <button class="period-btn selected" data-period="month">This Month</button>
+                    <button class="period-btn" data-period="year">This Year</button>
+                    <button class="period-btn" data-period="all">All Time</button>
                 </div>
                 <div class="wizard-nav">
                     <div></div>
-                    <button class="btn btn-primary" id="btn-next-1">Next</button>
+                    <button class="btn btn-primary" id="btn-next-1">Next →</button>
                 </div>
             </div>
 
             <!-- Step 2: Artist Selection -->
             <div class="wizard-panel" id="step-2">
-                <h3>Select Seed Artists</h3>
-                <p>Choose artists to base your recommendations on. Leave empty to use your top artists.</p>
+                <h3>Seed Artists</h3>
+                <p>Pick artists to anchor your recommendations. Leave empty to use your top artists automatically.</p>
                 <div class="artist-grid" id="artist-grid">
-                    <div class="loading">Loading artists...</div>
+                    <div class="loading">Loading</div>
                 </div>
                 <div class="wizard-nav">
-                    <button class="btn btn-secondary" id="btn-back-2">Back</button>
-                    <button class="btn btn-primary" id="btn-next-2">Next</button>
+                    <button class="btn btn-secondary" id="btn-back-2">← Back</button>
+                    <button class="btn btn-primary" id="btn-next-2">Next →</button>
                 </div>
             </div>
 
             <!-- Step 3: Mode Selection -->
             <div class="wizard-panel" id="step-3">
-                <h3>Choose Discovery Mode</h3>
+                <h3>Discovery Mode</h3>
                 <p>How adventurous do you want to be?</p>
                 <div class="mode-cards">
                     <div class="mode-card selected" data-mode="comfort_zone">
-                        <div class="mode-icon">&#127968;</div>
                         <h4>Comfort Zone</h4>
-                        <p>Find tracks similar to what you already love. Safe choices based on your taste.</p>
+                        <p>Find tracks similar to what you already love. Safe choices based on your taste profile.</p>
                     </div>
                     <div class="mode-card" data-mode="branch_out">
-                        <div class="mode-icon">&#127758;</div>
                         <h4>Branch Out</h4>
-                        <p>Explore similar artists and discover new sounds. Perfect for expanding your horizons.</p>
+                        <p>Explore similar artists and discover new sounds beyond your usual listening habits.</p>
                     </div>
                 </div>
                 <div class="wizard-nav">
-                    <button class="btn btn-secondary" id="btn-back-3">Back</button>
-                    <button class="btn btn-primary" id="btn-next-3">Next</button>
+                    <button class="btn btn-secondary" id="btn-back-3">← Back</button>
+                    <button class="btn btn-primary" id="btn-next-3">Next →</button>
                 </div>
             </div>
 
             <!-- Step 4: Popularity Filter -->
             <div class="wizard-panel" id="step-4">
-                <h3>Popularity Preference</h3>
+                <h3>Popularity</h3>
                 <p>Do you want popular hits or hidden gems?</p>
                 <div class="popularity-slider-container">
                     <input type="range" class="popularity-slider" id="popularity-slider" min="0" max="2" value="1">
@@ -783,24 +952,21 @@
                     <div class="popularity-value" id="popularity-value">Balanced</div>
                 </div>
                 <div class="wizard-nav">
-                    <button class="btn btn-secondary" id="btn-back-4">Back</button>
-                    <button class="btn btn-primary btn-generate" id="btn-generate">Generate Recommendations</button>
+                    <button class="btn btn-secondary" id="btn-back-4">← Back</button>
+                    <button class="btn btn-primary btn-generate" id="btn-generate">Generate →</button>
                 </div>
             </div>
 
             <!-- Step 5: Results -->
             <div class="wizard-panel" id="step-5">
                 <div class="results-header">
-                    <h3>Your Recommendations</h3>
+                    <h3>Results</h3>
                     <div class="results-actions">
                         <button class="btn btn-secondary" id="btn-export-json">Export JSON</button>
                         <button class="btn btn-primary" id="btn-create-playlist">Create Playlist</button>
                     </div>
                 </div>
-                <div class="recommendation-grid" id="recommendation-grid">
-                    <!-- Recommendations will be inserted here -->
-                </div>
-
+                <div class="recommendation-grid" id="recommendation-grid"></div>
                 <div class="wizard-nav">
                     <button class="btn btn-secondary" id="btn-start-over">Start Over</button>
                     <button class="btn btn-primary" id="btn-add-liked">Add Liked to Playlist</button>
@@ -811,7 +977,7 @@
         <!-- Loading Overlay -->
         <div class="loading-overlay" id="loading-overlay">
             <div class="loading-spinner"></div>
-            <div>Generating recommendations...</div>
+            <div>Generating recommendations</div>
         </div>
     </div>
 

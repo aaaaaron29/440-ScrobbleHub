@@ -1161,6 +1161,21 @@ def fetch_artist_tags_batch(batch_size: int = 25):
                             count=tag_count
                         )
                         db.session.add(artist_tag)
+
+                # Also fetch listener count for popularity filtering
+                artist = Artist.query.get(artist_row.id)
+                if artist and artist.lastfm_listeners is None:
+                    try:
+                        info = client.get_artist_info(artist_row.name)
+                        listeners = info.get('stats', {}).get('listeners')
+                        playcount = info.get('stats', {}).get('playcount')
+                        if listeners:
+                            artist.lastfm_listeners = int(listeners)
+                        if playcount:
+                            artist.lastfm_playcount = int(playcount)
+                    except Exception:
+                        pass
+
                 db.session.commit()
                 fetched_count += 1
                 logger.debug(f"Fetched {len(tags)} tags for {artist_row.name}")

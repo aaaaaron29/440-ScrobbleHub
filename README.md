@@ -71,11 +71,11 @@ pip install -r requirements.txt
 python app.py
 ```
 
-The application will start at `http://localhost:5000`
+The application will start at `http://127.0.0.1:5000`
 
 ### 5. Configure
 
-1. Open `http://localhost:5000` in your browser
+1. Open `http://127.0.0.1:5000` in your browser
 2. Click "Get Started" or "Settings"
 3. Enter your Last.fm username and API key
 4. Click "Save & Connect"
@@ -104,11 +104,11 @@ import pandas as pd
 import requests
 
 # Get all scrobbles as JSON
-response = requests.get('http://localhost:5000/api/export?type=scrobbles&format=json')
+response = requests.get('http://127.0.0.1:5000/api/export?type=scrobbles&format=json')
 scrobbles = pd.DataFrame(response.json()['data'])
 
 # Or download CSV directly
-scrobbles = pd.read_csv('http://localhost:5000/api/export?type=scrobbles&format=csv')
+scrobbles = pd.read_csv('http://127.0.0.1:5000/api/export?type=scrobbles&format=csv')
 ```
 
 ### Direct Database Access

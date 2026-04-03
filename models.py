@@ -43,6 +43,8 @@ class Artist(db.Model):
     name = db.Column(db.Text, nullable=False, index=True)
     url = db.Column(db.Text, nullable=True)
     image_url = db.Column(db.Text, nullable=True)
+    lastfm_listeners = db.Column(db.Integer, nullable=True)
+    lastfm_playcount = db.Column(db.Integer, nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     # Relationships

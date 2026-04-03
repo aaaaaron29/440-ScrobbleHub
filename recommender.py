@@ -660,13 +660,20 @@ class RecommendationEngine:
     def _calculate_popularity_score(self, track: Track, inverse: bool = False) -> float:
         """Calculate popularity score.
 
-        Uses Spotify popularity (0-100) if available, falls back to local scrobble count.
+        Priority: Spotify popularity > Last.fm artist listeners > local scrobble count.
+        Last.fm listeners uses a log scale normalized against thresholds:
+        - < 100k listeners  → niche (score 0.0-0.3)
+        - 100k-1M listeners → mid (score 0.3-0.6)
+        - > 1M listeners    → mainstream (score 0.6-1.0)
         """
         if track.spotify_popularity is not None:
-            # Normalize Spotify's 0-100 to 0.0-1.0
             score = track.spotify_popularity / 100.0
+        elif track.artist and track.artist.lastfm_listeners:
+            listeners = track.artist.lastfm_listeners
+            # Log-scale normalization: 10k=0.1, 100k=0.3, 500k=0.5, 1M=0.6, 10M=0.9
+            score = min(1.0, math.log10(max(listeners, 1)) / 7.0)
         else:
-            # Fallback: use local scrobble count (original behavior)
+            # Last resort: local scrobble count
             if track.id in self._scrobble_count_cache:
                 scrobble_count = self._scrobble_count_cache[track.id]
             else:
@@ -685,11 +692,11 @@ class RecommendationEngine:
         candidates: List[Dict],
         popularity_level: str
     ) -> List[Dict]:
-        """Filter candidates based on popularity preference using Spotify popularity.
+        """Filter candidates based on popularity preference.
 
-        Thresholds based on Spotify's 0-100 scale (normalized to 0-1):
-        - Mainstream: popularity > 50 (score > 0.5)
-        - Niche: popularity < 40 (score < 0.4)
+        Uses Last.fm listener counts as primary signal:
+        - Niche: score < 0.4 (~under 500k Last.fm listeners)
+        - Mainstream: score > 0.5 (~over 1M Last.fm listeners)
         - Balanced: no filter
         """
         if popularity_level == 'balanced':
